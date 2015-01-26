@@ -5,9 +5,22 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 
-var UserSchema = new Schema({
+var ListSchema = new Schema({
   name: String,
-  email: { type: String, lowercase: true },
+  icon: String,
+  description: String,
+  gifts: [{type: Schema.Types.ObjectId, ref: 'Gift'}]
+  lastModified: Date,
+  deadline: Date,
+});
+
+var UserSchema = new Schema({
+  name:  {
+    first: String,
+    last: String
+  },
+  email: { type: String, lowercase: true, required: true, unique: true },
+  birthdate: {type: Date, },
   role: {
     type: String,
     default: 'user'
@@ -18,7 +31,8 @@ var UserSchema = new Schema({
   facebook: {},
   twitter: {},
   google: {},
-  github: {}
+  github: {},
+  friends: [{type: Schema.Types.ObjectId, ref: 'User'}]
 });
 
 /**
