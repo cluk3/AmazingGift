@@ -3,18 +3,20 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+var visible = ['public', 'friends', 'private'];
+
 var GiftSchema = new Schema({
-  name: String,
+  name:{ type: String, required: true},
   description: String,
-  active: Boolean,
-  given: Boolean,
+  active: {type: Boolean, default: true},
+  given: {type: Boolean, default: false},
   givenAt: Date,
-  surprise: Boolean,
-  openView: Boolean,
-  lastModified: Date,
-  purchased: Date,
+  surprise: {type: Boolean, required: true},
+  visibility: {type: String, default: "friends", enum: visible},
+  lastModified: {type: Date, default: Date.now},
+  purchased: { type: Boolean, default: false},
   purchasedAt: Date,
-  owner: {type: Schema.Types.ObjectId, ref: 'User'},
+  owner: {type: Schema.Types.ObjectId, ref: 'User', required: true},
   managers: [{type: Schema.Types.ObjectId, ref: 'User'}],
   payers: [{type: Schema.Types.ObjectId, ref: 'User'}],
   userFeedback: { comment: String, vote: Number},
@@ -22,4 +24,4 @@ var GiftSchema = new Schema({
   list: Schema.Types.ObjectId
 });
 
-module.exports = mongoose.model('Gift', ThingSchema);
+module.exports = mongoose.model('Gift', GiftSchema);

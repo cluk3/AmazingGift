@@ -5,22 +5,27 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 
+function capitalize (val) {
+  if ('string' !== typeof val) val = '';
+  return val[0].toUpperCase() + val.substring(1).toLowerCase();
+}
+
 var ListSchema = new Schema({
   name: String,
   icon: String,
   description: String,
-  gifts: [{type: Schema.Types.ObjectId, ref: 'Gift'}]
+  gifts: [{type: Schema.Types.ObjectId, ref: 'Gift'}],
   lastModified: Date,
   deadline: Date,
 });
 
 var UserSchema = new Schema({
   name:  {
-    first: String,
-    last: String
+    first: {type: String, set: capitalize},
+    last: {type: String, set: capitalize}
   },
   email: { type: String, lowercase: true, required: true, unique: true },
-  birthdate: {type: Date, },
+  birthdate: {type: Date, required: true},
   role: {
     type: String,
     default: 'user'
@@ -32,7 +37,8 @@ var UserSchema = new Schema({
   twitter: {},
   google: {},
   github: {},
-  friends: [{type: Schema.Types.ObjectId, ref: 'User'}]
+  friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  lists: [ListSchema]
 });
 
 /**

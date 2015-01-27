@@ -2,26 +2,26 @@
 
 angular.module('amazingGiftsApp')
   .controller('MainCtrl', function ($scope, $http, socket) {
-    $scope.awesomeThings = [];
+    $scope.awesomeGifts = [];
 
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
-      socket.syncUpdates('thing', $scope.awesomeThings);
+    $http.get('/api/gifts').success(function(awesomeGifts) {
+      $scope.awesomeGifts = awesomeGifts;
+      socket.syncUpdates('gift', $scope.awesomeGifts);
     });
 
-    $scope.addThing = function() {
-      if($scope.newThing === '') {
+    $scope.addGift = function() {
+      if($scope.newGift === '') {
         return;
       }
-      $http.post('/api/things', { name: $scope.newThing });
-      $scope.newThing = '';
+      $http.post('/api/gifts', { name: $scope.newGift });
+      $scope.newGift = '';
     };
 
-    $scope.deleteThing = function(thing) {
-      $http.delete('/api/things/' + thing._id);
+    $scope.deleteGift = function(gift) {
+      $http.delete('/api/gifts/' + gift._id);
     };
 
     $scope.$on('$destroy', function () {
-      socket.unsyncUpdates('thing');
+      socket.unsyncUpdates('gift');
     });
   });
