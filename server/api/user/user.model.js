@@ -4,20 +4,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var ListSchema = require('../list/list.model')
 
 function capitalize (val) {
   if ('string' !== typeof val) val = '';
   return val[0].toUpperCase() + val.substring(1).toLowerCase();
 }
-
-var ListSchema = new Schema({
-  name: String,
-  icon: String,
-  description: String,
-  gifts: [{type: Schema.Types.ObjectId, ref: 'Gift'}],
-  lastModified: Date,
-  deadline: Date,
-});
 
 var UserSchema = new Schema({
   name:  {
@@ -60,11 +52,13 @@ UserSchema
   .virtual('profile')
   .get(function() {
     return {
-      'name': this.name,
+      'name': this.name.first,
       'role': this.role
     };
   });
 
+/**
+* Useless at the moment
 // Non-sensitive info we'll be putting in the token
 UserSchema
   .virtual('token')
@@ -74,6 +68,8 @@ UserSchema
       'role': this.role
     };
   });
+*
+**/
 
 /**
  * Validations

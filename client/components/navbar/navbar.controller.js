@@ -10,7 +10,10 @@ angular.module('amazingGiftsApp')
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
-    $scope.getCurrentUser = Auth.getCurrentUser;
+    $scope.getFullname = function() {
+    var name = Auth.getCurrentUser().name || {};
+    return name.first + " " + name.last;
+    }
 
     $scope.logout = function() {
       Auth.logout();

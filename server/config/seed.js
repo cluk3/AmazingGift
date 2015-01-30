@@ -14,11 +14,19 @@ User.find({}).remove(function() {
     provider: 'local',
     name: {first: 'Test', last: 'user'},
     email: 'test@test.com',
-    birthdate: Date.now,
+    birthdate: Date.now(),
     password: 'test',
-  })
-  .then(function(user) {
-      
+  },
+  { 
+    provider: 'local',
+    name: {first: 'admin', last: 'cool'},
+    email: 'admin@test.com',
+    birthdate: Date.now(),
+    password: 'admin',
+    role: 'admin'
+  },
+  function(err, user) {
+      if(err) console.log(err);
     console.log('finished populating users');
       
     Gift.find({}).remove(function() {
@@ -26,14 +34,13 @@ User.find({}).remove(function() {
       Gift.create({
           name : 'Dildo',
           description : 'A wonderful Dildo.',
-          surpise: true,
+          surprise: true,
           visibility: 'public',
           owner: user._id
-      })
-      .then(function() {
-        
+      }, function(err) { 
+        if(err) return console.log(err);
         console.log('finished populating Gifts');
-      
+    
       });
 
     });

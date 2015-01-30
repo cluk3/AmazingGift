@@ -8,12 +8,14 @@ angular.module('amazingGiftsApp', [
   'ui.router',
   'ui.bootstrap'
 ])
-  .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, $logProvider) {
     $urlRouterProvider
       .otherwise('/');
 
     $locationProvider.html5Mode(true);
     $httpProvider.interceptors.push('authInterceptor');
+    $logProvider.debugEnabled(true);
+
   })
 
   .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
