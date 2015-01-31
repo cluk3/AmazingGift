@@ -10,7 +10,10 @@ angular.module('amazingGiftsApp')
 
       if(form.$valid) {
         Auth.createUser({
-          name: $scope.user.name,
+          name: {
+            first: $scope.user.nameFirst,
+            last: $scope.user.nameLast
+          },
           email: $scope.user.email,
           password: $scope.user.password
         })

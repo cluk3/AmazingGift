@@ -4,20 +4,23 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
-var ListSchema = require('../list/list.model')
+var ListSchema = require('../list/list.model');
+var restId = require('../restId/restId.model');
 
 function capitalize (val) {
   if ('string' !== typeof val) val = '';
   return val[0].toUpperCase() + val.substring(1).toLowerCase();
 }
 
+
 var UserSchema = new Schema({
   name:  {
     first: {type: String, set: capitalize},
     last: {type: String, set: capitalize}
   },
+  restid: {type: String, unique: true, required: true, default: 'a', lowercase: true},
   email: { type: String, lowercase: true, required: true, unique: true },
-  birthdate: {type: Date, required: true},
+  birthdate: Date,
   role: {
     type: String,
     default: 'user'
@@ -121,6 +124,20 @@ UserSchema
       next(new Error('Invalid password'));
     else
       next();
+  });
+
+UserSchema
+  .pre('save', function(next) {
+    var fullname = this.name.first + this.name.last,
+     _this = this;
+
+
+    restId.findOneAndUpdate({"resource": fullname},{$inc: {count: 1}},
+      {upsert: true, new: true}, function (err, updated) {
+        if(err) next(err);
+        _this.restid = (updated.count == 1) ? updated.resource : (  updated.resource+updated.count);
+        next();
+    });
   });
 
 /**

@@ -29,6 +29,7 @@ exports.create = function (req, res, next) {
   newUser.role = 'user';
   newUser.save(function(err, user) {
     if (err) return validationError(res, err);
+    console.dir(user);
     var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
     res.json({ token: token });
   });
@@ -40,10 +41,10 @@ exports.create = function (req, res, next) {
 exports.show = function (req, res, next) {
   var userId = req.params.id;
 
-  User.findById(userId, function (err, user) {
+  User.findOne({restid: userId},'-salt -hashedPassword', function (err, user) {
     if (err) return next(err);
     if (!user) return res.send(401);
-    res.json(user.profile);
+    res.json(user);
   });
 };
 
@@ -60,7 +61,7 @@ exports.destroy = function(req, res) {
 
 /**
  * Change a users password
- */
+
 exports.changePassword = function(req, res, next) {
   var userId = req.user._id;
   var oldPass = String(req.body.oldPassword);
@@ -78,11 +79,42 @@ exports.changePassword = function(req, res, next) {
     }
   });
 };
+*/
+exports.changePassword = function(req, res, next) {
+  var user = req.user;
+  var oldPass = String(req.body.oldPassword);
+  var newPass = String(req.body.newPassword);
+
+  if(user.authenticate(oldPass)) {
+    user.password = newPass;
+    user.save(function(err) {
+      if (err) return validationError(res, err);
+     res.send(200);
+  });
+    } else {
+      res.send(403);
+    }
+};
 
 /**
  * Get my info
  */
-exports.me = function(req, res, next) {
+
+ exports.me = function(req, res, next) {
+  var user = req.user;
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      birthdate: user.birthdate,
+      role: user.role,
+      provider: user.provider,
+      friends: user.friends,
+      lists: user.lists
+    });
+};
+
+/*exports.me = function(req, res, next) {
   var userId = req.user._id;
   User.findOne({
     _id: userId
@@ -92,6 +124,7 @@ exports.me = function(req, res, next) {
     res.json(user);
   });
 };
+*/
 
 /**
  * Authentication callback
