@@ -4,7 +4,7 @@ div(ng-include='"components/navbar/navbar.html"')
 
   ul.list-group
     li.list-group-item(ng-repeat='user in users')
-      strong {{user.name.first}} {{user.name.last}}
+      a(ui-sref="profile({userId: user.restid})")
+        strong {{user.name.first}} {{user.name.last}}
       br
       span.text-muted {{user.email}}
-

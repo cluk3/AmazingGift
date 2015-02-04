@@ -128,6 +128,7 @@ UserSchema
 
 UserSchema
   .pre('save', function(next) {
+    if (!this.isNew) return next();
     var fullname = this.name.first + this.name.last,
      _this = this;
 

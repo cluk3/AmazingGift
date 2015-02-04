@@ -39,6 +39,13 @@ div(ng-include='"components/navbar/navbar.html"')
           p.help-block(ng-show='form.password.$error.mongoose')
             | {{ errors.password }}
 
+        .form-group(ng-class='{ "has-success": form.confirmpw.$valid && submitted,\
+        "has-error": form.confirmpw.$invalid && submitted }')
+          label Confirm Password
+          input.form-control(type='password', name='confirmpw', ng-model='user.confirmpw', compare-to='user.password', required='')
+          p.help-block(ng-show='(form.confirmpw.$error.compareTo || form.confirmpw.$error.required) && submitted')
+            | Passwords must coincide
+
         div
           button.btn.btn-inverse.btn-lg.btn-login(type='submit')
             | Sign up

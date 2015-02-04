@@ -1,0 +1,15 @@
+div(ng-include='"components/navbar/navbar.html"')
+.container
+  h1 {{fullname}}
+  br
+  p {{email}}
+  p {{id}}
+  p {{ bday | date:'fullDate'}}
+  br
+  strong(ng-hide="hasLists()") {{fullname}} has no list at the moment.
+  div(ng-show="hasLists()")
+    h2 Lists:
+    ul.list-group
+      li.list-group-item(ng-repeat="list in lists")
+        p {{list.name}}
+        p {{list.description}}
