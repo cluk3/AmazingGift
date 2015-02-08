@@ -14,9 +14,10 @@ exports.config = {
 
   // If true, only chromedriver will be started, not a standalone selenium.
   // Tests for browsers other than chrome will not run.
-  chromeOnly: true,
+  directConnect: true,
 
   // list of files / patterns to load in the browser
+
   specs: [
     'e2e/**/*.spec.js'
   ],

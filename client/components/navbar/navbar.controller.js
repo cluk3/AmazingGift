@@ -12,8 +12,8 @@ angular.module('amazingGiftsApp')
     $scope.isAdmin = Auth.isAdmin;
     $scope.getFullname = function() {
     var name = Auth.getCurrentUser().name || {};
-    return name.first + " " + name.last;
-    }
+    return name.first + ' ' + name.last;
+    };
 
     $scope.logout = function() {
       Auth.logout();

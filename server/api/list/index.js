@@ -8,17 +8,14 @@ var router = express.Router();
 
 
 router.route('/:user/lists')
-  .get(auth.isAuthenticated(),authorize.isFriend, function(req,res) {
-    console.log(req.params.user);
-    res.send("Hello Router!");
-  })
-/*
-.post(auth.isAuthenticated(),authorize.isUser,controller.create)
+  .get(auth.isAuthenticated(), authorize.isFriend, controller.index)
+  .post(auth.isAuthenticated(), authorize.isUser, controller.create);
 
+/*
 router.route('/:user/lists/:id')
-.delete(controller.destroy);
-.get(controller.show);
-.put(controller.update);
+  .delete(auth.isAuthenticated(), authorize.isUser, controller.destroy);
+  .get(auth.isAuthenticated(), authorize.isFriend, controller.show);
+  .put(auth.isAuthenticated(), authorize.isUser, controller.update);
 */
 
 module.exports = router;

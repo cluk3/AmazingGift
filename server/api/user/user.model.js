@@ -136,7 +136,7 @@ UserSchema
     restId.findOneAndUpdate({"resource": fullname},{$inc: {count: 1}},
       {upsert: true, new: true}, function (err, updated) {
         if(err) next(err);
-        _this.restid = (updated.count == 1) ? updated.resource : (  updated.resource+updated.count);
+        _this.restid = (updated.count === 1) ? updated.resource : (  updated.resource+updated.count);
         next();
     });
   });

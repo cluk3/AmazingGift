@@ -4,6 +4,7 @@ var User = require('./user.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var restId = require('../restId/restId.model');
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -23,7 +24,7 @@ exports.index = function(req, res) {
 /**
  * Creates a new user
  */
-exports.create = function (req, res, next) {
+exports.create = function (req, res) {
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
@@ -38,12 +39,12 @@ exports.create = function (req, res, next) {
 /**
  * Get a single user
  */
-exports.show = function (req, res, next) {
+exports.show = function (req, res) {
   var userId = req.params.id;
 
   User.findOne({restid: userId},'-salt -hashedPassword', function (err, user) {
     if (err) return next(err);
-    if (!user) return res.send(401);
+    if (!user) return res.send(404);
     res.json(user);
   });
 };
@@ -53,34 +54,17 @@ exports.show = function (req, res, next) {
  * restriction: 'admin'
  */
 exports.destroy = function(req, res) {
-  User.findByIdAndRemove(req.params.id, function(err, user) {
+  User.findOneAndRemove({restid: req.params.id}, function(err, user) {
     if(err) return res.send(500, err);
+    if(!user) return res.send(404);
     return res.send(204);
   });
 };
 
 /**
  * Change a users password
-
-exports.changePassword = function(req, res, next) {
-  var userId = req.user._id;
-  var oldPass = String(req.body.oldPassword);
-  var newPass = String(req.body.newPassword);
-
-  User.findById(userId, function (err, user) {
-    if(user.authenticate(oldPass)) {
-      user.password = newPass;
-      user.save(function(err) {
-        if (err) return validationError(res, err);
-        res.send(200);
-      });
-    } else {
-      res.send(403);
-    }
-  });
-};
 */
-exports.changePassword = function(req, res, next) {
+exports.changePassword = function(req, res) {
   var user = req.user;
   var oldPass = String(req.body.oldPassword);
   var newPass = String(req.body.newPassword);
@@ -97,13 +81,55 @@ exports.changePassword = function(req, res, next) {
 };
 
 /**
+ * Updates a user info
+ */
+
+exports.update = function(req, res) {
+  var user = req.user;
+
+  console.log(req.body);
+
+  User.findById(user._id, function(err, updUser) {
+    if (err) return validationError(res, err);
+
+    if(req.body.email)
+      updUser.email = req.body.email;
+
+    if(req.body.birthdate)
+      updUser.birthdate = req.body.birthdate;
+
+    if(req.body.name) {
+      updUser.name.first = req.body.name.first || updUser.name.first;
+      updUser.name.last = req.body.name.last || updUser.name.last;
+      var fullname = updUser.name.first + updUser.name.last;
+      restId.findOneAndUpdate({"resource": fullname},{$inc: {count: 1}},
+        {upsert: true, new: true}, function (err, updated) {
+          if(err) next(err);
+          updUser.restid = (updated.count === 1) ? updated.resource : (  updated.resource+updated.count);
+          updUser.save(function(err) {
+            if (err) return validationError(res, err);
+            res.send(200);
+          });
+        });
+    } else {
+      updUser.save(function(err) {
+        if (err) return validationError(res, err);
+        res.send(200);
+      });
+    }
+
+  });
+};
+
+/**
  * Get my info
  */
 
- exports.me = function(req, res, next) {
+ exports.me = function(req, res) {
   var user = req.user;
     res.json({
       _id: user._id,
+      restid: user.restid,
       name: user.name,
       email: user.email,
       birthdate: user.birthdate,
@@ -129,6 +155,6 @@ exports.changePassword = function(req, res, next) {
 /**
  * Authentication callback
  */
-exports.authCallback = function(req, res, next) {
+exports.authCallback = function(req, res) {
   res.redirect('/');
 };

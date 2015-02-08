@@ -38,19 +38,28 @@ function isAuthenticated() {
 /**
  * Checks if the user role meets the minimum requirements of the route
  */
-function hasRole(roleRequired) {
-  if (!roleRequired) throw new Error('Required role needs to be set');
-
+function isAdminOrOwner() {
   return compose()
     .use(isAuthenticated())
     .use(function meetsRequirements(req, res, next) {
-      if (config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf(roleRequired)) {
+      var isOwner = req.user.restid === req.params.id;
+      var isAdmin = req.user.role === 'admin';
+
+      if (isOwner || isAdmin) {
         next();
       }
       else {
         res.send(403);
       }
     });
+}
+
+function isOwner(req, res, next) {
+  if (req.user.restid === req.params.id) {
+    next();
+  } else {
+    res.send(403);
+  }
 }
 
 /**
@@ -71,6 +80,7 @@ function setTokenCookie(req, res) {
 }
 
 exports.isAuthenticated = isAuthenticated;
-exports.hasRole = hasRole;
+exports.isAdminOrOwner = isAdminOrOwner;
 exports.signToken = signToken;
 exports.setTokenCookie = setTokenCookie;
+exports.isOwner = isOwner;

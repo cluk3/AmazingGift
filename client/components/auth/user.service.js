@@ -17,6 +17,9 @@ angular.module('amazingGiftsApp')
         params: {
           id:'me'
         }
+      },
+      update: {
+        method: 'PUT'
       }
-	  });
+    });
   });

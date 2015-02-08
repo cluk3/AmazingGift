@@ -6,13 +6,15 @@ var controller = require('./user.controller');
 var auth = require('../../auth/auth.service');
 var listRouter = require('../list');
 var router = express.Router();
+var orOwner = true;
 
 router.use('/',listRouter);
 
 router.get('/', auth.isAuthenticated(), controller.index);
-router.delete('/:id', auth.hasRole('admin'), controller.destroy);
+router.delete('/:id', auth.isAdminOrOwner(), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.put('/me/password', auth.isAuthenticated(), controller.changePassword);
+router.put('/:id', auth.isAuthenticated(), auth.isOwner, controller.update);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
 

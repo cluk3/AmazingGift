@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('amazingGiftsApp')
-  .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q, $log) {
+  .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
       currentUser = User.get();
@@ -59,8 +59,6 @@ angular.module('amazingGiftsApp')
       createUser: function(user, callback) {
         var cb = callback || angular.noop;
 
-        $log.log(user);
-
         return User.save(user,
           function(data) {
             $cookieStore.put('token', data.token);
@@ -101,6 +99,13 @@ angular.module('amazingGiftsApp')
        */
       getCurrentUser: function() {
         return currentUser;
+      },
+
+      refreshCurrentUser: function() {
+        if($cookieStore.get('token')) {
+          currentUser = User.get();
+          return currentUser.$promise;
+        }
       },
 
       /**

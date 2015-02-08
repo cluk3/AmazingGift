@@ -29,9 +29,6 @@ var all = {
     session: 'amazing-gifts-secret'
   },
 
-  // List of user roles
-  userRoles: ['guest', 'user', 'admin'],
-
   // MongoDB connection options
   mongo: {
     options: {

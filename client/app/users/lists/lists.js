@@ -7,5 +7,5 @@ angular.module('amazingGiftsApp')
         url: '/users/:userId/list/:listId',
         templateUrl: 'app/users/lists/.html',
         controller: 'UsersProfileCtrl',
-      })
+      });
   });

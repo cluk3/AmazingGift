@@ -1,14 +1,17 @@
 'use strict'
 
+var User = require('../user/user.model');
+var List = require('./list.model');
 
-var List = require('./list.model')
-
-exports.show = function (req, res, next) {
-  var listId = req.params.id;
-
-  User.findById(userId, function (err, user) {
-    if (err) return next(err);
-    if (!user) return res.send(401);
-    res.json(user.profile);
-  });
+exports.index = function (req, res) {
+  var lists = req.isFriend ? req.requestedUser.lists : req.user.lists;
+  res.json(200, lists);
 };
+
+exports.create = function(req, res) {
+  var newList = req.body;
+  User.findByIdAndUpdate(req.user._id, {$push: {lists: newList}}, function(err, updated) {
+    if(err) throw err;
+    res.send(201);
+  })
+}

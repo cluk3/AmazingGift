@@ -64,8 +64,8 @@ User.find({}).remove(function() {
     Gift.find({}).remove(function() {
 
       Gift.create({
-          name : 'Dildo',
-          description : 'A wonderful Dildo.',
+          name : 'Tablet',
+          description : 'A wonderful tablet.',
           surprise: true,
           visibility: 'public',
           owner: test._id
